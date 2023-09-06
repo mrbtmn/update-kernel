@@ -141,7 +141,7 @@ install_dependence()
             if $temp_redhat_install'*' install "$@"; then
                 return 0
             fi
-            yellow "依赖安装失败！！"
+            yellow "Dependency installation failed！！"
             green  "欢迎进行Bug report(https://github.com/kirin10000/Xray-script/issues)，感谢您的支持"
             yellow "按回车键继续或者Ctrl+c退出"
             read -s
@@ -253,7 +253,7 @@ if [ $release == "ubuntu" ] || [ $release == "debian" ] || [ $release == "deepin
     if ! version_ge "$(dpkg --list | grep '^[ '$'\t]*ii[ '$'\t][ '$'\t]*linux-base[ '$'\t]' | awk '{print $3}')" "4.5ubuntu1~16.04.1"; then
         red    "系统版本太低！"
         yellow "请更换新系统或使用xanmod内核"
-        tyblue "xanmod内核安装脚本：https://github.com/kirin10000/xanmod-install"
+        tyblue "xanmod内核安装脚本：https://github.com/mrbtmn/xanmod-install"
         exit 1
     fi
 fi
@@ -463,10 +463,10 @@ remove_kernel()
             red "未发现可卸载内核！不卸载"
             return 1
         fi
-        yellow "卸载过程中弹出对话框，请选择NO！"
-        yellow "卸载过程中弹出对话框，请选择NO！"
-        yellow "卸载过程中弹出对话框，请选择NO！"
-        tyblue "按回车键继续。。"
+        yellow "A dialog box pops up during the uninstallation process, please select NO.！"
+        yellow "A dialog box pops up during the uninstallation process, please select NO.！"
+        yellow "A dialog box pops up during the uninstallation process, please select NO.！"
+        tyblue "Press Enter to continue。。"
         read -s
         if [ $install_headers -eq 1 ]; then
             apt -y purge "${kernel_list_headers[@]}" "${kernel_list_image[@]}" "${kernel_list_modules[@]}" && exit_code=0
@@ -501,7 +501,7 @@ remove_kernel()
         green "卸载成功"
     else
         red "卸载失败！"
-        yellow "按回车键继续或Ctrl+c退出"
+        yellow "Press Enter to continue or Ctrl+c to exit"
         read -s
         return 1
     fi
@@ -531,7 +531,7 @@ update_kernel() {
         rm "$temp_file"
         if ! rpm --import "https://www.elrepo.org/RPM-GPG-KEY-elrepo.org"; then
             red "导入elrepo公钥失败"
-            yellow "按回车键继续或Ctrl+c退出"
+            yellow "Press Enter to continue or Ctrl+c to exit"
             read -s
         fi
         if version_ge "$systemVersion" 8; then
@@ -541,7 +541,7 @@ update_kernel() {
         fi
         if ! $redhat_package_manager -y install "$elrepo_url"; then
             red "Install elrepo failed, please check it and retry."
-            yellow "按回车键继续或Ctrl+c退出"
+            yellow "Press Enter to continue or Ctrl+c to exit"
             read -s
         fi
         if $redhat_package_manager --help | grep -q "\\-\\-enablerepo="; then
@@ -623,13 +623,13 @@ update_kernel() {
         rm -rf kernel_
         apt -y -f install
     fi
-    ask_if "是否卸载其余内核？(y/n)" && remove_kernel
-    green "安装完成"
-    yellow "系统需要重启"
-    if ask_if "现在重启系统? (y/n)"; then
+    ask_if "Uninstall remaining cores？(y/n)" && remove_kernel
+    green "The installation is complete"
+    yellow "System needs to restart"
+    if ask_if "Reboot the system now? (y/n)"; then
         reboot
     else
-        yellow "请尽快重启！"
+        yellow "Please restart as soon as possible！"
     fi
 }
 
@@ -649,7 +649,7 @@ echo " Kernel  : $(uname -r)"
 echo "----------------------------------------"
 echo " Auto install latest kernel"
 echo
-echo " URL: https://github.com/kirin10000/update-kernel"
+echo " URL: https://github.com/mrbtmn/update-kernel"
 echo "----------------------------------------"
 echo "Press any key to start...or Press Ctrl+C to cancel"
 get_char
