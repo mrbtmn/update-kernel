@@ -53,7 +53,7 @@ check_base_command()
     do
         if ! command -V "${temp_command_list[$i]}" > /dev/null; then
             red "命令\"${temp_command_list[$i]}\"未找到"
-            red "不是标准的Linux系统"
+            red "Not a standard Linux system"
             exit 1
         fi
     done
@@ -72,9 +72,9 @@ test_important_dependence_installed()
             if LANG="en_US.UTF-8" LANGUAGE="en_US:en" apt-mark manual "$1" | grep -qi 'set[ '$'\t]*to[ '$'\t]*manually[ '$'\t]*installed'; then
                 temp_exit_code=0
             else
-                red "安装依赖 \"$1\" 出错！"
+                red "Install dependencies \"$1\" Error！"
                 green  "欢迎进行Bug report(https://github.com/kirin10000/Xray-script/issues)，感谢您的支持"
-                yellow "按回车键继续或者Ctrl+c退出"
+                yellow "Press Enter to continue or Ctrl+c to exit."
                 read -s
             fi
         elif $debian_package_manager -y --no-install-recommends install "$1"; then
@@ -233,8 +233,8 @@ if ([ $release == "ubuntu" ] || [ $release == "debian" ] || [ $release == "deepi
 fi
 if [ $release == "ubuntu" ] || [ $release == "debian" ] || [ $release == "deepin" ] || [ $release == "other-debian" ]; then
     if ! dpkg-deb --help | grep -qw "zstd"; then
-        red    "当前系统dpkg不支持解压zst包，不支持安装此内核！"
-        green  "请更新系统，或选择使用其他系统，或选择安装xanmod内核"
+        red    "The current system dpkg does not support decompression of the zst package and does not support the installation of this kernel.！"
+        green  "Please update the system, or choose to use another system, or choose to install the xanmod kernel"
         exit 1
     fi
     check_important_dependence_installed "linux-base" ""
@@ -244,21 +244,21 @@ if [ $release == "ubuntu" ] || [ $release == "debian" ] || [ $release == "deepin
             if ! $debian_package_manager update; then
                 red "$debian_package_manager update出错"
                 green  "欢迎进行Bug report(https://github.com/kirin10000/Xray-script/issues)，感谢您的支持"
-                yellow "按回车键继续或者Ctrl+c退出"
+                yellow "Press Enter to continue or Ctrl+c to exit"
                 read -s
             fi
             install_dependence linux-base
         fi
     fi
     if ! version_ge "$(dpkg --list | grep '^[ '$'\t]*ii[ '$'\t][ '$'\t]*linux-base[ '$'\t]' | awk '{print $3}')" "4.5ubuntu1~16.04.1"; then
-        red    "系统版本太低！"
-        yellow "请更换新系统或使用xanmod内核"
-        tyblue "xanmod内核安装脚本：https://github.com/kirin10000/xanmod-install"
+        red    "System version is too low！"
+        yellow "Please change to a new system or use xanmod kernel"
+        tyblue "xanmod kernel installation script：https://github.com/mrbtmn/xanmod-install"
         exit 1
     fi
 fi
 if [ "$EUID" != "0" ]; then
-    red "请用root用户运行此脚本！！"
+    red "Please run this script as root user！！"
     exit 1
 fi
 
@@ -284,8 +284,8 @@ get_system_info()
 check_mem()
 {
     if (($(free -m | sed -n 2p | awk '{print $2}')<300)); then
-        red    "检测到内存小于300M，更换内核可能无法开机，请谨慎选择"
-        yellow "按回车键以继续或ctrl+c中止"
+        red    "It is detected that the memory is less than 300M. You may not be able to boot when changing the kernel. Please choose carefully."
+        yellow "Press Enter to continue or Ctrl+c to exit"
         read -s
         echo
     fi
@@ -364,7 +364,7 @@ get_latest_version() {
             continue
         fi
         if ! wget -q -O "$temp_file" "https://kernel.ubuntu.com/~kernel-ppa/mainline/v${kernel_list[$i]}/"; then
-            red "获取内核版本失败"
+            red "Failed to get kernel version"
             rm "$temp_file"
             return 1
         fi
@@ -423,7 +423,7 @@ remove_kernel()
                 fi
             done
             if [ "$ok_install" != "1" ] ; then
-                red "内核可能安装失败！不卸载"
+                red "The kernel installation may have failed! Do not uninstall"
                 return 1
             fi
             ok_install=0
@@ -435,7 +435,7 @@ remove_kernel()
                 fi
             done
             if [ "$ok_install" != "1" ] ; then
-                red "内核可能安装失败！不卸载"
+                red "The kernel installation may have failed! Do not uninstall"
                 return 1
             fi
         fi
@@ -448,7 +448,7 @@ remove_kernel()
             fi
         done
         if [ "$ok_install" != "1" ] ; then
-            red "内核可能安装失败！不卸载"
+            red "The kernel installation may have failed! Do not uninstall"
             return 1
         fi
         ok_install=0
@@ -460,17 +460,17 @@ remove_kernel()
             fi
         done
         if [ "$ok_install" != "1" ] ; then
-            red "内核可能安装失败！不卸载"
+            red "The kernel installation may have failed! Do not uninstall"
             return 1
         fi
         if [ ${#kernel_list_image[@]} -eq 0 ] && [ ${#kernel_list_modules[@]} -eq 0 ] && ([ $install_headers -eq 0 ] || [ ${#kernel_list_headers[@]} -eq 0 ]); then
-            red "未发现可卸载内核！不卸载"
+            red "No uninstallable kernel found! Do not uninstall"
             return 1
         fi
-        yellow "卸载过程中弹出对话框，请选择NO！"
-        yellow "卸载过程中弹出对话框，请选择NO！"
-        yellow "卸载过程中弹出对话框，请选择NO！"
-        tyblue "按回车键继续。。"
+        yellow "A dialog box pops up during the uninstallation process, please select NO.！"
+        yellow "A dialog box pops up during the uninstallation process, please select NO.！"
+        yellow "A dialog box pops up during the uninstallation process, please select NO.！"
+        tyblue "Press Enter to continue。。"
         read -s
         if [ $install_headers -eq 1 ]; then
             apt -y purge "${kernel_list_headers[@]}" "${kernel_list_image[@]}" "${kernel_list_modules[@]}" && exit_code=0
@@ -492,7 +492,7 @@ remove_kernel()
         kernel_list_core=($(grep -E '^kernel(|-ml|-lt)-core' "$temp_file"))
         rm "$temp_file"
         if [ $((${#kernel_list[@]}-${#kernel_list_first[@]})) -le 0 ] || [ $((${#kernel_list_devel[@]}-${#kernel_list_devel_first[@]})) -le 0 ] || (version_ge "$systemVersion" 8 && ([ $((${#kernel_list_modules[@]}-${#kernel_list_modules_first[@]})) -le 0 ] || [ $((${#kernel_list_core[@]}-${#kernel_list_core_first[@]})) -le 0 ])) || ([ $install_headers -eq 1 ] && [ $((${#kernel_list_headers[@]}-${#kernel_list_headers_first[@]})) -le 0 ]); then
-            red "内核可能未安装！不卸载"
+            red "The kernel may not be installed! Do not uninstall"
             return 1
         fi
         if [ $install_headers -eq 1 ]; then
@@ -502,10 +502,10 @@ remove_kernel()
         fi
     fi
     if [ $exit_code -eq 0 ]; then
-        green "卸载成功"
+        green "Uninstalled successfully"
     else
-        red "卸载失败！"
-        yellow "按回车键继续或Ctrl+c退出"
+        red "Uninstall failed！"
+        yellow "Press Enter to continue or Ctrl+c to exit"
         read -s
         return 1
     fi
@@ -535,7 +535,7 @@ update_kernel() {
         rm "$temp_file"
         if ! rpm --import "https://www.elrepo.org/RPM-GPG-KEY-elrepo.org"; then
             red "导入elrepo公钥失败"
-            yellow "按回车键继续或Ctrl+c退出"
+            yellow "Press Enter to continue or Ctrl+c to exit"
             read -s
         fi
         if version_ge "$systemVersion" 8; then
@@ -545,7 +545,7 @@ update_kernel() {
         fi
         if ! $redhat_package_manager -y install "$elrepo_url"; then
             red "Install elrepo failed, please check it and retry."
-            yellow "按回车键继续或Ctrl+c退出"
+            yellow "Press Enter to continue or Ctrl+c to exit"
             read -s
         fi
         if $redhat_package_manager --help | grep -q "\\-\\-enablerepo="; then
@@ -561,7 +561,7 @@ update_kernel() {
         [ $install_headers -eq 1 ] && temp_install+=("kernel-ml-headers")
         if ! "${redhat_install_command[@]}" "${temp_install[@]}"; then
             red "Error: Install latest kernel failed, please check it."
-            yellow "按回车键继续或Ctrl+c退出"
+            yellow "Press Enter to continue or Ctrl+c to exit"
             read -s
         fi
         #[ ! -f "/boot/grub2/grub.cfg" ] && red "/boot/grub2/grub.cfg not found, please check it."
@@ -610,8 +610,8 @@ update_kernel() {
             if ! dpkg -x "${check_temp[$i]}" _check_temp; then
                 cd ..
                 rm -rf kernel_
-                red "当前系统dpkg版本过低，不支持解压最新内核安装包"
-                yellow "请使用新系统"
+                red "The current system dpkg version is too low and does not support decompression of the latest kernel installation package."
+                yellow "Please use the new system"
                 exit 1
             fi
             rm -rf _check_temp
@@ -627,13 +627,13 @@ update_kernel() {
         rm -rf kernel_
         apt -y -f install
     fi
-    ask_if "是否卸载其余内核？(y/n)" && remove_kernel
-    green "安装完成"
-    yellow "系统需要重启"
-    if ask_if "现在重启系统? (y/n)"; then
+    ask_if "Uninstall remaining cores? (y/n)" && remove_kernel
+    green "The installation is complete"
+    yellow "System needs to restart"
+    if ask_if "Reboot the system now? (y/n)"; then
         reboot
     else
-        yellow "请尽快重启！"
+        yellow "Please restart as soon as possible！"
     fi
 }
 
